@@ -53,7 +53,7 @@ class AnalysisService:
         one_liner = conversation.predict(input=one_line_prompt)
         score = conversation.predict(input=score_prompt)
 
-        output_filename = os.getenv('OUTPUT_PATH') + title + '.md'
+        output_filename = AnalysisService.get_file_path(title)
 
         metadata = generate_metadata(labels, score, url)
 
@@ -65,3 +65,14 @@ class AnalysisService:
             file.write(str(response.content))
 
         return url
+
+    @staticmethod
+    def is_running_in_docker() -> bool:
+        return os.path.exists('/.dockerenv')
+
+    @staticmethod
+    def get_file_path(title: str) -> str:
+        if AnalysisService.is_running_in_docker():
+            return '/obsidian/' + title + '.md'
+        else:
+            return os.getenv('OUTPUT_PATH') + title + '.md'

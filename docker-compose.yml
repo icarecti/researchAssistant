@@ -1,0 +1,8 @@
+version: '3'
+services:
+  research_assistant:
+    build: .
+    ports:
+      - "5001:5000"
+    volumes:
+      - ${OUTPUT_PATH}:/obsidian
