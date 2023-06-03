@@ -14,7 +14,7 @@ class AnalysisService:
     def analyse(data):
         url, text = data
         analysis = Analysis(url)
-        print("analyzing text form: " + url)
+        print("analyzing text from: " + url)
         chat = ChatAnthropic()
         messages = [
             HumanMessage(
