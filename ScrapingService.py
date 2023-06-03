@@ -16,5 +16,4 @@ class ScrapingService:
         soup = BeautifulSoup(html, "html.parser")
         extracted_text = soup.getText().replace('\n', ' ')
         extracted_text = ' '.join(extracted_text.split())
-        print(extracted_text)
         return url, extracted_text

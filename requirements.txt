@@ -1,3 +1,6 @@
 flask
 requests
 beautifulsoup4
+python-dotenv
+anthropic
+langchain
