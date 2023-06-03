@@ -2,10 +2,11 @@ from typing import Optional
 
 
 class Analysis:
-    def __init__(self, url: str, title: Optional[str] = None, labels: Optional[str] = None,
+    def __init__(self, url: str, website_type: str, title: Optional[str] = None, labels: Optional[str] = None,
                  one_liner: Optional[str] = None,
                  score: Optional[str] = None, summary: Optional[str] = None):
         self.url = url
+        self.website_type = website_type
         self.title = title
         self.labels = labels
         self.one_liner = one_liner
@@ -13,7 +14,7 @@ class Analysis:
         self.summary = summary
 
     def __str__(self) -> str:
-        return f"URL: {self.url}, Title: {self.title}, Labels: {self.labels}, One-liner: {self.one_liner}, Score: {self.score}, Summary: {self.summary}"
+        return f"URL: {self.url}, Title: {self.title}, Labels: {self.labels}, One-liner: {self.one_liner}, Score: {self.score}, Summary: {self.summary}, Website Type: {self.website_type}"
 
     def set_title(self, title: str) -> None:
         self.title = title
@@ -29,3 +30,6 @@ class Analysis:
 
     def set_summary(self, summary: str) -> None:
         self.summary = summary
+
+    def set_website_type(self, website_type: str) -> None:
+        self.website_type = website_type

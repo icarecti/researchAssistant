@@ -6,19 +6,20 @@ from langchain.chat_models import ChatOpenAI
 from langchain.schema import HumanMessage
 
 from domain.Analysis import Analysis
+from domain.ScrapingResult import ScrapingResult
 from services.FilePathService import FilePathService
 
 
 class AnalysisService:
     @staticmethod
-    def analyse(data):
-        url, extracted_text = data
-        analysis = Analysis(url)
-        print("analyzing text from: " + url)
+    def analyse(data: ScrapingResult):
+        analysis = Analysis(data.url, data.website_type)
+        print("analyzing text from: " + data.url)
         chat = ChatAnthropic()
         messages = [
             HumanMessage(
-                content=AnalysisService.load_string_from_file("SummaryInOutlineForm.txt").format(text=extracted_text))
+                content=AnalysisService.load_string_from_file("SummaryInOutlineForm.txt").format(
+                    text=data.extracted_text))
         ]
         print("calling claude for summary")
         response = chat(messages)
@@ -52,20 +53,20 @@ class AnalysisService:
         return analysis
 
     @staticmethod
-    def generate_metadata(labels, score, url):
+    def generate_metadata(labels, score, website_type):
         # TODO 03.06.23: add "type" to metadata (tool, blog, repo, video, paper,...)
         metadata = "---\n"
         metadata += "tags: " + labels + "\n"
         metadata += "score: " + score + "\n"
+        metadata += "type: " + website_type + "\n"
         metadata += "date: " + str(datetime.date.today()) + "\n"
-        metadata += "source: " + url + "\n"
         metadata += "status: created\n"
         metadata += "---\n"
         return metadata
 
     @staticmethod
     def generate_full_analysis(analysis: Analysis):
-        analysis_text = AnalysisService.generate_metadata(analysis.labels, analysis.score, analysis.url)
+        analysis_text = AnalysisService.generate_metadata(analysis.labels, analysis.score, analysis.website_type)
         analysis_text += "[source](" + analysis.url + ")"
         analysis_text += "\n\n\n"
         analysis_text += "### in one sentence\n\n" + str(analysis.one_liner)

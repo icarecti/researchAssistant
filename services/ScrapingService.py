@@ -3,10 +3,12 @@ from urllib.request import urlopen
 import tiktoken
 from bs4 import BeautifulSoup
 
+from domain.ScrapingResult import ScrapingResult
+
 
 class ScrapingService:
     @staticmethod
-    def scrape_text(url):
+    def scrape(url):
         # make scraping smarter add url check to see what type of url it is (youtube, blog, tool, github repo, pdf etc)
         # if youtube, then get the transcript
         # if image, then get a description
@@ -23,4 +25,5 @@ class ScrapingService:
         tokensize = len(encoding.encode(extracted_text))
         print("extracted text with tokensize: " + str(tokensize))
 
-        return url, extracted_text
+        # TODO 04.06.23: once the website type is analyzed, add it to the ScrapingResult
+        return ScrapingResult(url, "blog", extracted_text)
