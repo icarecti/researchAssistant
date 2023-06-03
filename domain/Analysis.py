@@ -1,8 +1,8 @@
-from typing import List, Optional
+from typing import Optional
 
 
 class Analysis:
-    def __init__(self, url: str, title: Optional[str] = None, labels: Optional[List[str]] = None,
+    def __init__(self, url: str, title: Optional[str] = None, labels: Optional[str] = None,
                  one_liner: Optional[str] = None,
                  score: Optional[str] = None, summary: Optional[str] = None):
         self.url = url
@@ -18,7 +18,7 @@ class Analysis:
     def set_title(self, title: str) -> None:
         self.title = title
 
-    def set_labels(self, labels: List[str]) -> None:
+    def set_labels(self, labels: str) -> None:
         self.labels = labels
 
     def set_one_liner(self, one_liner: str) -> None:
