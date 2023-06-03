@@ -6,3 +6,5 @@ services:
       - "5001:5000"
     volumes:
       - ${OUTPUT_PATH}:/obsidian
+    environment:
+      - PYTHONUNBUFFERED=1
