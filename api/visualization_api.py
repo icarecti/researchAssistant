@@ -5,7 +5,7 @@ from flask import Blueprint, jsonify, Response
 from domain.Analysis import Analysis
 from services.KnowledgeMapService import KnowledgeMapService
 
-visualization_api = Blueprint('ingest_api', __name__)
+visualization_api = Blueprint('visualization_api', __name__)
 
 
 @visualization_api.route('/knowledgeMap', methods=['GET'])
