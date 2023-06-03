@@ -7,18 +7,9 @@ from langchain.chat_models import ChatAnthropic
 from langchain.chat_models import ChatOpenAI
 from langchain.schema import HumanMessage
 
+from domain.Analysis import Analysis
+
 load_dotenv()
-
-
-def generate_metadata(labels, score, url):
-    metadata = "---\n"
-    metadata += "tags: " + labels + "\n"
-    metadata += "score: " + score + "\n"
-    metadata += "date: " + str(datetime.date.today()) + "\n"
-    metadata += "source: " + url + "\n"
-    metadata += "status: created\n"
-    metadata += "---\n\n"
-    return metadata
 
 
 class AnalysisService:
@@ -36,16 +27,17 @@ class AnalysisService:
         ]
         print("calling claude for summary")
         response = chat(messages)
+        summary = response.content
 
         llm = ChatOpenAI(temperature=0.9, model_name="gpt-4")
         conversation = ConversationChain(llm=llm, verbose=False)
-        title_prompt = "summarize into one short title: " + response.content
+        title_prompt = "summarize into one short title: " + summary
         labels_prompt = "Extract at least 10 labels of the [Text] that will be used categorize the text. Just return " \
                         "the labels comma separated and ranked form most general to most specific. " \
-                        "[Text]=" + response.content
-        one_line_prompt = "summarize into one short line: " + response.content
+                        "[Text]=" + summary
+        one_line_prompt = "summarize into one short line: " + summary
         score_prompt = "score the relevance of the following text in the field of large language models on a scale of " \
-                       "one to ten: " + response.content
+                       "one to ten: " + summary
 
         print("calling gpt-4 for title, labels, one-liner and score based on summary")
         title = conversation.predict(input=title_prompt)
@@ -55,16 +47,17 @@ class AnalysisService:
 
         output_filename = AnalysisService.get_file_path(title)
 
-        metadata = generate_metadata(labels, score, url)
+        metadata = AnalysisService.generate_metadata(labels, score, url)
 
         print("writing to file: " + title)
         with open(output_filename, 'w') as file:
             file.write(metadata)
             file.write(str(one_liner))
             file.write("\n\n")
-            file.write(str(response.content))
+            file.write(str(summary))
 
-        return url
+        analysis = Analysis(url, title, labels, one_liner, score, summary)
+        return analysis
 
     @staticmethod
     def is_running_in_docker() -> bool:
@@ -76,3 +69,14 @@ class AnalysisService:
             return '/obsidian/' + title + '.md'
         else:
             return os.getenv('OUTPUT_PATH') + title + '.md'
+
+    @staticmethod
+    def generate_metadata(labels, score, url):
+        metadata = "---\n"
+        metadata += "tags: " + labels + "\n"
+        metadata += "score: " + score + "\n"
+        metadata += "date: " + str(datetime.date.today()) + "\n"
+        metadata += "source: " + url + "\n"
+        metadata += "status: created\n"
+        metadata += "---\n\n"
+        return metadata
