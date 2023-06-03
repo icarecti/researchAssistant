@@ -1,0 +1,1 @@
+Write a summary of the [Text] that retains all important information while reducing the word count to a minimum. Ensure that the summary accurately conveys the key points of the original text and that the meaning is not lost. Just return the summary in outline-form:[Text]={text}

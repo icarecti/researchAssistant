@@ -1,0 +1,1 @@
+Extract at least 10 labels of the [Text] that will be used categorize the text. Just return the labels comma separated and ranked form most general to most specific. [Text] = {summary}
