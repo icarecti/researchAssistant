@@ -1,3 +1,4 @@
+import datetime
 from typing import List
 
 from flask import Blueprint, jsonify, request, Response
@@ -17,4 +18,5 @@ def analyse_urls() -> tuple[Response, int]:
     extracted_data: List[ScrapingResult] = [ScrapingService.scrape(url) for url in tqdm(urls)]
     analysis: List[Analysis] = [AnalysisService.analyse(data) for data in tqdm(extracted_data)]
     urls = [a.url for a in analysis]
+    AnalysisService.create_daily_summary(datetime.date.today())
     return jsonify(urls), 200

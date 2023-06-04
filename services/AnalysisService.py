@@ -47,10 +47,8 @@ class AnalysisService:
         score = conversation.predict(input=score_prompt)
         analysis.set_score(score)
 
-        output_filename = FilePathService.get_file_path(title) + ".md"
-
-        print("writing to file: " + title)
-        with open(output_filename, 'w') as file:
+        print("writing analysis to file: " + title)
+        with open(FilePathService.get_file_path(title) + ".md", 'w') as file:
             file.write(AnalysisService.generate_full_analysis(analysis))
 
         return analysis
@@ -80,3 +78,23 @@ class AnalysisService:
     def load_string_from_file(filename):
         with open("prompts/" + filename, 'r') as file:
             return file.read()
+
+    @staticmethod
+    def create_daily_summary(date):
+        directory = FilePathService.get_folder_path() + "daily-summary"
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+        filepath = directory + "/" + str(date)
+        print("writing daily summary to file: " + str(date))
+        with open(filepath + ".md", 'w') as file:
+            file.write(AnalysisService.generate_daily_summary(date))
+
+    @staticmethod
+    def generate_daily_summary(date):
+        daily_summary = "```dataview\n"
+        daily_summary += "TABLE date, score, type\n"
+        daily_summary += "FROM \"researchAssistant\"\n"
+        daily_summary += "WHERE status = \"created\" AND date = date(" + str(date) + ")\n"
+        daily_summary += "SORT score desc\n"
+        daily_summary += "```\n"
+        return daily_summary
