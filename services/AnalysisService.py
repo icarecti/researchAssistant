@@ -1,5 +1,7 @@
 import datetime
+import os
 
+from dotenv import load_dotenv
 from langchain import ConversationChain
 from langchain.chat_models import ChatAnthropic
 from langchain.chat_models import ChatOpenAI
@@ -8,6 +10,8 @@ from langchain.schema import HumanMessage
 from domain.Analysis import Analysis
 from domain.ScrapingResult import ScrapingResult
 from services.FilePathService import FilePathService
+
+load_dotenv()
 
 
 class AnalysisService:
@@ -25,8 +29,7 @@ class AnalysisService:
         response = chat(messages)
         summary = response.content
         analysis.set_summary(summary)
-
-        llm = ChatOpenAI(temperature=0.9, model_name="gpt-4")
+        llm = ChatOpenAI(temperature=0.9, model_name=os.getenv('OPEN_AI_MODEL'))
         conversation = ConversationChain(llm=llm, verbose=False)
 
         title_prompt = AnalysisService.load_string_from_file("Title.txt").format(summary=summary)
@@ -34,7 +37,7 @@ class AnalysisService:
         one_line_prompt = AnalysisService.load_string_from_file("InOneSentence.txt").format(summary=summary)
         score_prompt = AnalysisService.load_string_from_file("Score.txt").format(summary=summary)
 
-        print("calling gpt-4 for title, labels, one-liner and score based on summary")
+        print("calling openAI for title, labels, one-liner and score based on summary")
         title = conversation.predict(input=title_prompt)
         analysis.set_title(title)
         labels = conversation.predict(input=label_prompt)
@@ -54,7 +57,6 @@ class AnalysisService:
 
     @staticmethod
     def generate_metadata(labels, score, website_type):
-        # TODO 03.06.23: add "type" to metadata (tool, blog, repo, video, paper,...)
         metadata = "---\n"
         metadata += "tags: " + labels + "\n"
         metadata += "score: " + score + "\n"
