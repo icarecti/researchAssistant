@@ -40,3 +40,21 @@ pip3 install -r requirements.txt
 python3 app.py
 
 ```
+## how to use the app
+Once the app is started there are two rest enpoints that can be triggered. These will be triggered in the future by a browser plugin. For now they have to be triggered manually:
+
+1. **Analyse URLs**: send a POST request with a list of URLS to http://localhost:5000/urls
+```
+curl --location 'http://localhost:5000/urls' \
+--header 'Content-Type: application/json' \
+--data '{
+    "urls": ["https://some-example-url.com", "https://www.a-second-example-url.com/lates/post"]
+}'
+```
+
+2. **Create Canvas**: send a GET request to http://localhost:5000/knowledgeMap
+```
+curl --location 'http://localhost:5000/knowledgeMap'
+```
+
+
