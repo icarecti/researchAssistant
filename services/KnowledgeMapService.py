@@ -1,26 +1,23 @@
-from langchain import ConversationChain
-from langchain.chat_models import ChatOpenAI
+import json
+import uuid
 
+from domain.Canvas import Canvas
+from domain.CanvasNode import CanvasNode
 from services.FilePathService import FilePathService
 
 
 class KnowledgeMapService:
     @staticmethod
-    def create_map(data):
-        llm = ChatOpenAI(temperature=0.9, model_name="gpt-4")
-        conversation = ConversationChain(llm=llm, verbose=True)
+    def create_map_from(notes):
+        canvas = Canvas()
+        y_position = 0
+        for note in notes:
+            node = CanvasNode("file", note, 400, 400, uuid.uuid4().hex, 0, y_position)
+            canvas.add_node(node)
+            y_position -= 480
+        canvas_dict = canvas.to_dict()
+        canvas_text = json.dumps(canvas_dict)
 
-        with open("domain/CanvasSpecification.txt", "r") as file:
-            specification = file.read()
-
-        canvas_prompt = "Create a canvas for obsidian, just return the json file nothing else. " \
-                        "Here is the specification: " + specification + "\n" \
-                        + "And here is the data that should be organised on the canvas: " + str(data)
-        print("calling gpt-4 for canvas based on data")
-        canvas_text = conversation.predict(input=canvas_prompt)
-
-        print(canvas_text)
-
-        output_filename = FilePathService.get_file_path("knowledge_map.canvas")
+        output_filename = FilePathService.get_file_path("knowledge_map2.canvas")
         with open(output_filename, 'w') as file:
             file.write(canvas_text)
